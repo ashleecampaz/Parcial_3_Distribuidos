@@ -1,0 +1,94 @@
+{
+	"info": {
+		"_postman_id": "025a4c7e-9d22-4a1b-8b1b-6e5a6f2c3d4e",
+		"name": "Servicio Financiera (Paz y Salvo) - Actualizado Integer Code",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_collection_link": "https://www.postman.com/collections/025a4c7e-9d22-4a1b-8b1b-6e5a6f2c3d4e"
+	},
+	"item": [
+		{
+			"name": "Consultar Deudas Pendientes (POST con PathVariable)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/financiera/consultarPendientes/1234",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"financiera",
+						"consultarPendientes",
+						"1234"
+					]
+				},
+				"description": "Consulta las deudas pendientes para un estudiante dado su código en la URL. Si la lista está vacía, el estudiante está a paz y salvo en el área financiera."
+			},
+			"response": []
+		},
+		{
+			"name": "Eliminar Deudas Pendientes",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/financiera/eliminarPendientes/1234",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"financiera",
+						"eliminarPendientes",
+						"1234"
+					]
+				},
+				"description": "Elimina las deudas pendientes para un estudiante específico. Simula el pago/resolución de las deudas en la capa de persistencia."
+			},
+			"response": []
+		},
+		{
+			"name": "Consultar Deudas (Estudiante Sin Deudas)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/financiera/consultarPendientes/9012",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"financiera",
+						"consultarPendientes",
+						"9012"
+					]
+				},
+				"description": "Consulta las deudas para un estudiante que inicialmente no tiene deudas pendientes (ejemplo de paz y salvo)."
+			},
+			"response": []
+		}
+	]
+}
