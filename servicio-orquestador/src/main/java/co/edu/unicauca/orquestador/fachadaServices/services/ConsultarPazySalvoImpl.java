@@ -28,16 +28,16 @@ public class ConsultarPazySalvoImpl implements ConsultarPazySalvoInt {
 
                 try {
                         // Llamar al serivicio del área de laboratorios
-                        String urlServicioLaboratorio = "http://localhost:8081/laboratorio/consultarPendientes/"
+                        String urlServicioLaboratorio = "http://localhost:8082/api/deudas-laboratorio/listar/"
                                         + objPeticion.getCodigoEstudiante();
-                        List<RespuestaConsultaPazySalvoLaboratorioDTO> objRespuestaLaboratorio = webClient.post()
+                        List<RespuestaConsultaPazySalvoLaboratorioDTO> objRespuestaLaboratorio = webClient.get()
                                         .uri(urlServicioLaboratorio)
-                                        .bodyValue(objPeticion)
                                         .retrieve()
                                         .bodyToFlux(RespuestaConsultaPazySalvoLaboratorioDTO.class)
                                         .collectList()
                                         .block(); // Síncrono
                         objRespuestaConsultaPazySalvo.setObjLaboratorio(objRespuestaLaboratorio);
+                        
 
                         // Llamar al servicio del área financiera
                         String urlServicioFinanciera = "http://localhost:8080/financiera/consultarPendientes/"
@@ -51,12 +51,12 @@ public class ConsultarPazySalvoImpl implements ConsultarPazySalvoInt {
                                         .block(); // Síncrono
                         objRespuestaConsultaPazySalvo.setObjFinanciera(objRespuestaFinanciera);
 
+                        
                         // Llamar al servicio del área de deportes
-                        String urlServicioDesportes = "http://localhost:8082/deportes/consultarPendientes/"
+                        String urlServicioDesportes = "http://localhost:8081/api/deudas-deporte/listar/"
                                         + objPeticion.getCodigoEstudiante();
-                        List<RespuestaConsultaPazySalvoDeportesDTO> objRespuestaDeportes = webClient.post()
+                        List<RespuestaConsultaPazySalvoDeportesDTO> objRespuestaDeportes = webClient.get()
                                         .uri(urlServicioDesportes)
-                                        .bodyValue(objPeticion)
                                         .retrieve()
                                         .bodyToFlux(RespuestaConsultaPazySalvoDeportesDTO.class)
                                         .collectList()
@@ -85,10 +85,10 @@ public class ConsultarPazySalvoImpl implements ConsultarPazySalvoInt {
                 RespuestaConsultaPazySalvoDTO objRespuestaConsultaPazySalvo = new RespuestaConsultaPazySalvoDTO();
 
                 // Llamar al servicio del área de laboratorios
-                String urlServicioLaboratorio = "";
-                Mono<List<RespuestaConsultaPazySalvoLaboratorioDTO>> objRespuestaLaboratorio = webClient.post()
+                String urlServicioLaboratorio = "http://localhost:8082/api/deudas-laboratorio/listar/"
+                                        + objPeticion.getCodigoEstudiante();;
+                Mono<List<RespuestaConsultaPazySalvoLaboratorioDTO>> objRespuestaLaboratorio = webClient.get()
                                 .uri(urlServicioLaboratorio)
-                                .bodyValue(objPeticion)
                                 .retrieve()
                                 .bodyToFlux(RespuestaConsultaPazySalvoLaboratorioDTO.class)
                                 .collectList()
@@ -96,7 +96,8 @@ public class ConsultarPazySalvoImpl implements ConsultarPazySalvoInt {
                                         "Error consultando en el área de laboratorios" + e.getMessage()));
 
                 // Llamar al servicio del área financiera
-                String urlServicioFinanciera = "";
+                String urlServicioFinanciera = "http://localhost:8080/financiera/consultarPendientes/"
+                                        + objPeticion.getCodigoEstudiante();
                 Mono<List<RespuestaConsultaPazySalvoFinancieraDTO>> objRespuestaFinanciera = webClient.post()
                                 .uri(urlServicioFinanciera)
                                 .bodyValue(objPeticion)
@@ -106,11 +107,12 @@ public class ConsultarPazySalvoImpl implements ConsultarPazySalvoInt {
                                 .doOnError(e -> System.err
                                                 .println("Error consultando en el área financiera" + e.getMessage()));
 
+                
                 // Llamar al servicio del área de deportes
-                String urlServicioDesportes = "";
-                Mono<List<RespuestaConsultaPazySalvoDeportesDTO>> objRespuestaDeportes = webClient.post()
+                String urlServicioDesportes = "http://localhost:8081/api/deudas-deporte/listar/"
+                                        + objPeticion.getCodigoEstudiante();;
+                Mono<List<RespuestaConsultaPazySalvoDeportesDTO>> objRespuestaDeportes = webClient.get()
                                 .uri(urlServicioDesportes)
-                                .bodyValue(objPeticion)
                                 .retrieve()
                                 .bodyToFlux(RespuestaConsultaPazySalvoDeportesDTO.class)
                                 .collectList()
@@ -123,6 +125,7 @@ public class ConsultarPazySalvoImpl implements ConsultarPazySalvoInt {
                                         objRespuestaConsultaPazySalvo.setObjLaboratorio(results.getT1());
                                         objRespuestaConsultaPazySalvo.setObjFinanciera(results.getT2());
                                         objRespuestaConsultaPazySalvo.setObjDeportes(results.getT3());
+                                        objRespuestaConsultaPazySalvo.setCodigoEstudiante(objPeticion.getCodigoEstudiante());
                                         objRespuestaConsultaPazySalvo.setMensaje(
                                                         "Consulta de paz y salvo realizada con éxito con composición asíncrona.");
                                         return objRespuestaConsultaPazySalvo;
@@ -130,10 +133,27 @@ public class ConsultarPazySalvoImpl implements ConsultarPazySalvoInt {
                                 .onErrorResume(error -> {
                                         RespuestaConsultaPazySalvoDTO respuesta = new RespuestaConsultaPazySalvoDTO();
                                         // Preguntar si hay que hacer algo parecido a cancelar reservas parciales.
+                                        respuesta.setCodigoEstudiante(objPeticion.getCodigoEstudiante());
                                         respuesta.setMensaje(
                                                         "Error al consultar el paz y salvo: " + error.getMessage());
                                         return Mono.just(respuesta);
                                 });
+                /*
+                return objRespuestaFinanciera.map(financiera -> {
+                        objRespuestaConsultaPazySalvo.setObjFinanciera(financiera);
+                        objRespuestaConsultaPazySalvo.setObjLaboratorio(null);
+                        objRespuestaConsultaPazySalvo.setObjDeportes(null);
+                        objRespuestaConsultaPazySalvo.setCodigoEstudiante(objPeticion.getCodigoEstudiante());
+                        objRespuestaConsultaPazySalvo.setMensaje(
+                                        "Consulta de paz y salvo realizada con éxito con composición asíncrona.");
+                        return objRespuestaConsultaPazySalvo;
+                }).onErrorResume(error -> {
+                        RespuestaConsultaPazySalvoDTO respuesta = new RespuestaConsultaPazySalvoDTO();
+                        respuesta.setCodigoEstudiante(objPeticion.getCodigoEstudiante());
+                        respuesta.setMensaje(
+                                        "Error al consultar el paz y salvo: " + error.getMessage());
+                        return Mono.just(respuesta);
+                });*/
         }
 
 }

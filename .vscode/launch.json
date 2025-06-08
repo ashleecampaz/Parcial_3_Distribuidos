@@ -1,0 +1,44 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-ServicioDeporteApplication<servicio-deporte>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "distribuidos.servicio_deporte.ServicioDeporteApplication",
+            "projectName": "servicio-deporte",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-ServicioFinancieraApplication<servicio-financiera>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.edu.unicauca.servicio_financiera.ServicioFinancieraApplication",
+            "projectName": "servicio-financiera",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-ServicioLaboratorioApplication<servicio-laboratorio>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "distribuidos.servicio_laboratorio.ServicioLaboratorioApplication",
+            "projectName": "servicio-laboratorio",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-OrquestadorApplication<orquestador>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "co.edu.unicauca.orquestador.OrquestadorApplication",
+            "projectName": "orquestador",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
