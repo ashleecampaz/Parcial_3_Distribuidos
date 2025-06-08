@@ -35,13 +35,13 @@ public class ServicioPrestamo implements ServicioPrestamoInt{
         || p.getCodigoEstudiante() == 0){
             throw new CampoObligatorioVacioException("Campo obligatorio vacio"); 
         }
-        if(!p.getFechaPrestamo().equals(null) && p.getFechaDevolucionReal() != null){
+        if(p.getFechaPrestamo() != null && p.getFechaDevolucionReal() != null){
             if(p.getFechaPrestamo().isAfter(p.getFechaDevolucionReal())){
                 throw new FechasInvalidasException("La fecha de devolucion no puede ser anterior a la fecha de prestamo.");
             }
         }
 
-        if(p.getFechaDevolucionEstimada() != null && p.getFechaDevolucionReal() !=null){
+        if(p.getFechaDevolucionEstimada() != null && p.getFechaPrestamo() !=null){
             if(p.getFechaPrestamo().isAfter(p.getFechaDevolucionEstimada())){
                 throw new FechasInvalidasException("La fecha de devolucion estimada no puede ser anterior a la fecha de prestamo.");
             }
