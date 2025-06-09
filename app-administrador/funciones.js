@@ -60,7 +60,7 @@ function recibirMensajePrivado(message) {
 const data = JSON.parse(message.body);
   let texto = `\nEstudiante: ${data.nombreEstudiante} (Código: ${data.codigoEstudiante})\nDeudas:\n`;
   data.deudas.forEach(d => texto += "- " + JSON.stringify(d) + "\n");
-  const referenciaDiv = document.getElementById('mensajesPrivados');
+  const referenciaDiv = document.getElementById('notificacionesPrivadas');
   const nuevoParrafo = document.createElement('p');
   nuevoParrafo.textContent = texto;
   referenciaDiv.appendChild(nuevoParrafo);
@@ -68,48 +68,8 @@ const data = JSON.parse(message.body);
 
 function recibirNotificacion(message) {
   const data = message.body;
-  const referenciaDiv = document.getElementById('usuariosConectados');
+  const referenciaDiv = document.getElementById('notificaciones');
   const nuevoParrafo = document.createElement('p');
   nuevoParrafo.textContent = data;
   referenciaDiv.appendChild(nuevoParrafo);
-}
-
-function enviarMensajeGrupalServidor() {
-  const input = document.getElementById('message');
-  const nicknameInput = document.getElementById('nicknameOrigen');
-
-  if (administrador && administrador.connected) {
-    const mensaje = {
-      area: areaSeleccionada,
-      mensaje: input.value,
-      nickname: nicknameInput.value,
-      fechaGeneracion: new Date().toISOString().split("T")[0]
-    };
-
-    administrador.send("/apiChat/enviarMensajePublico", {}, JSON.stringify(mensaje));
-    input.value = '';
-  } else {
-    alert("No estás conectado.");
-  }
-}
-
-function enviarMensajePrivadoServidor() {
-  const input = document.getElementById('messagePrivado');
-  const nicknameOrigenInput = document.getElementById('nicknameOrigen');
-  const nicknameDestinoInput = document.getElementById('nicknameDestino');
-
-  if (administrador && administrador.connected) {
-    const mensaje = {
-      area: areaSeleccionada,
-      mensaje: input.value,
-      nicknameOrigen: nicknameOrigenInput.value,
-      nicknameDestino: nicknameDestinoInput.value,
-      fechaGeneracion: new Date().toISOString().split("T")[0]
-    };
-
-    administrador.send("/apiChat/enviarMensajePrivado", {}, JSON.stringify(mensaje));
-    input.value = '';
-  } else {
-    alert("No estás conectado.");
-  }
 }
