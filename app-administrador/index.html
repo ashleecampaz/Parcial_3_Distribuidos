@@ -9,39 +9,38 @@
   <link rel="stylesheet" href="estilos.css">
 </head>
 <body>
-  <h2>Administradores</h2>
-  <input type="text" id="nicknameOrigen" placeholder="nickname de origen">
+  <h2>Panel de Administradores</h2>
+
+  <!-- Selector de área -->
+  <div id="selectorArea">
+    <label for="areaSeleccionada">Selecciona tu área:</label>
+    <select id="areaSeleccionada">
+      <option value="">-- Seleccionar área --</option>
+      <option value="laboratorio">Laboratorio</option>
+      <option value="financiera">Financiera</option>
+      <option value="deportes">Deportes</option>
+    </select>
+
   <button id="btnConectar" onclick="conectar()">Conectar</button>
   <button id="btnDesconectar" onclick="desconectar()" disabled>Desconectar</button>
-  <br><br>
-  <div id="inputGrupal">   
-    <h3>Enviar mensaje a chat grupal:</h3> 
-    <input type="text" id="message" placeholder="Escribe un mensaje" disabled>
-    <button id="btnEnviarGrupal" onclick="enviarMensajeGrupalServidor()" disabled>Enviar mensaje</button>
-  </div>
-  <br>
-  <div id="inputPrivado">    
-    <h3>Enviar mensaje a chat privado:</h3> 
-    <input type="text" id="nicknameDestino" placeholder="nickname de destino" disabled>
-    <input type="text" id="messagePrivado" placeholder="Escribe un mensaje" disabled>
-    <button id="btnEnviarPrivado" onclick="enviarMensajePrivadoServidor()" disabled>Enviar mensaje</button>
   </div>
 
+  <br><br>
+
+  <!-- Sección de mensajes -->
   <div id="chat">
     <h3>Usuarios conectados</h3>
     <div id="usuariosConectados">
-      <!-- Los mensajes se mostrarán aquí -->
+      <!-- Usuarios conectados aquí -->
     </div>
     <h3>Mensajes grupales:</h3>
     <div id="mensajesGrupales">
-      <!-- Los mensajes se mostrarán aquí -->
+      <!-- Mensajes grupales aquí -->
     </div>
     <h3>Mensajes privados:</h3>
     <div id="mensajesPrivados">
-      <!-- Los mensajes se mostrarán aquí -->
+      <!-- Mensajes privados aquí -->
     </div>
   </div>  
 </body>
 </html>
-
-

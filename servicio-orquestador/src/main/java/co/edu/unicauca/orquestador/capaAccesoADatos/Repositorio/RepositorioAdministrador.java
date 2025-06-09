@@ -15,8 +15,8 @@ public class RepositorioAdministrador {
         this.areaAdministradorMap = new ConcurrentHashMap<>();
     }
 
-    public void addSession(String sessionId, String nickname, String area) {
-        areaAdministradorMap.put(area, new Administrador(sessionId, nickname, area));
+    public void addSession(String sessionId, String area) {
+        areaAdministradorMap.put(area, new Administrador(sessionId, area));
     }
 
     public void removeSession(String area) {

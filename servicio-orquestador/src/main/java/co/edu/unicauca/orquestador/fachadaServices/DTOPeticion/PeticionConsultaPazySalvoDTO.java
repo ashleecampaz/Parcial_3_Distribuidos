@@ -7,4 +7,5 @@ import lombok.Data;
 @AllArgsConstructor
 public class PeticionConsultaPazySalvoDTO {
     private int codigoEstudiante;
+    private String nombreEstudiante;
 }

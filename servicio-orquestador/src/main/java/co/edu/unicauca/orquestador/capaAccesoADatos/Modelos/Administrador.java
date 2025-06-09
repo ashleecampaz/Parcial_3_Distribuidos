@@ -9,6 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Administrador {
     private String sessionId;
-    private String nickname;
     private String area;
 }
