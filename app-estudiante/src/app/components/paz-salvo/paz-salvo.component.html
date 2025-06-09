@@ -1,113 +1,140 @@
 <div>
-  <h2>Consultar Paz y Salvo</h2>
-  
-  <input type="number" placeholder="Código del estudiante" [(ngModel)]="peticionCodigoEstudiante.codigoEstudiante"/>
-  <!-- Botón para disparar la consulta -->
-<button (click)="consultar()" class="bg-blue-500 text-white px-4 py-2 rounded">
-  Consultar Paz y Salvo
-</button>
+  <h2> Datos Consulta </h2>
+  <form #form="ngForm" id="form_consulta">
+    <label for="nombre"> *Nombre estudiante</label>
+    <input type="text" placeholder="Nombre del estudiante" required name="nombre"
+      [(ngModel)]="peticionCodigoEstudiante.nombreEstudiante" #nombre="ngModel" />
+    <div *ngIf="nombre.invalid && nombre.touched" class="text-red-600">
+      El nombre es obligatorio.
+    </div>
+    <br>
 
-<!-- Mostrar resultados solo si hay respuesta -->
-<div *ngIf="respuestaOrquestador as r">
-  <h2>{{ r.mensaje }}</h2>
+    <label for="codigo"> *Código estudiante</label>
+    <input type="number" placeholder="Código del estudiante" required name="codigo"
+      [(ngModel)]="peticionCodigoEstudiante.codigoEstudiante" #codigo="ngModel" />
+    <div *ngIf="codigo.invalid && codigo.touched" class="text-red-600">
+      El código es obligatorio.
+    </div>
+    <br>
 
-  <!-- Mostrar tarjeta si todas las listas están vacías -->
-  <div *ngIf="!r.objLaboratorio?.length && !r.objFinanciera?.length && !r.objDeportes?.length" class="bg-green-100 text-green-800 p-4 text-center rounded my-4">
-    El estudiante está paz y salvo.
+    <!-- Botón para disparar la consulta -->
+    <button (click)="consultar()" [disabled]="form.invalid" class="px-4 my-4 rounded">
+      Consultar
+    </button>
+  </form>
+  <hr>
+  <!-- Mostrar resultados solo si hay respuesta -->
+  <div *ngIf="respuestaOrquestador as r">
+    <p id="mensaje_orquestador"> {{ r.mensaje }}</p>
+
+    <!-- Mostrar tarjeta si todas las listas están vacías -->
+    <div *ngIf=" r && r.objLaboratorio?.length==0 && r.objFinanciera?.length==0 && r.objDeportes?.length==0"
+      class="bg-green-100 text-green-800 p-4 text-center rounded my-4">
+      <p id="mensaje_pazysalvo"> El estudiante {{peticionCodigoEstudiante.nombreEstudiante}} identificado con codigo
+        {{peticionCodigoEstudiante.codigoEstudiante}}
+        se encuentra a paz y salvo.
+        <br>
+        <br>
+        Paz y Salvo generado a las {{hora.toTimeString().slice(0, 5)}} del dia {{hora.getDate()}} del mes de
+        {{hora.toLocaleString('es-ES', { month: 'long' })}} del año {{hora.getFullYear()}}.
+      </p>
+
+
+    </div>
+
+    <!-- Mostrar tablas solo si hay datos -->
+    <div class="flex justify-between gap-4"
+      *ngIf="r.objLaboratorio?.length || r.objFinanciera?.length || r.objDeportes?.length">
+      <div id="tablas" class=" row col-12">
+        <!-- Laboratorio -->
+        <div class="flex-1 border p-2 rounded" class="col-12 col-lg-4">
+          <h3 class="font-bold text-center mb-2">Laboratorios</h3>
+          <ng-container *ngIf="r.objLaboratorio?.length; else noLab">
+            <table class="table table-bordered table-striped">
+              <thead>
+                <tr class="bg-gray-200">
+                  <th>Fecha Préstamo</th>
+                  <th>Estado</th>
+                  <th>Fecha Devolución Estimada</th>
+                  <th>Fecha Devolución Real</th>
+                  <th>Equipo</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of r.objLaboratorio">
+                  <td>{{ item.fechaPrestamo }}</td>
+                  <td>{{ item.estado }}</td>
+                  <td>{{ item.fechaDevolucionEstimada }}</td>
+                  <td>{{ item.fechaDevolucionReal }}</td>
+                  <td>{{ item.equipo }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </ng-container>
+          <ng-template #noLab>
+            <p class="text-center text-gray-600">El estudiante no tiene deudas en esta área.</p>
+          </ng-template>
+        </div>
+
+        <!-- Financiera -->
+        <div class="flex-1 border p-2 rounded" class="col-12 col-lg-4">
+          <h3 class="font-bold text-center mb-2">Financiera</h3>
+          <ng-container *ngIf="r.objFinanciera?.length; else noFin">
+            <table class="table table-bordered table-striped">
+              <thead>
+                <tr class="bg-gray-200">
+                  <th>Monto Adeudado</th>
+                  <th>Motivo Deuda</th>
+                  <th>Fecha Generación</th>
+                  <th>Fecha Límite</th>
+                  <th>Estado Deuda</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of r.objFinanciera">
+                  <td>{{ item.montoAdeudado }}</td>
+                  <td>{{ item.motivoDeuda }}</td>
+                  <td>{{ item.fechaGeneracionDeuda }}</td>
+                  <td>{{ item.fechaLimitePago }}</td>
+                  <td>{{ item.estadoDeuda }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </ng-container>
+          <ng-template #noFin>
+            <p class="text-center text-gray-600">El estudiante no tiene deudas en esta área.</p>
+          </ng-template>
+        </div>
+
+        <!-- Deportes -->
+        <div class="flex-1 border p-2 rounded" class="col-12 col-lg-4">
+          <h3 class="font-bold text-center mb-2">Deportes</h3>
+          <ng-container *ngIf="r.objDeportes?.length; else noDep">
+            <table class="table table-bordered table-striped">
+              <thead>
+                <tr class="bg-gray-200">
+                  <th>Fecha Préstamo</th>
+                  <th>Fecha Devolución Estimada</th>
+                  <th>Fecha Devolución Real</th>
+                  <th>Implemento</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of r.objDeportes">
+                  <td>{{ item.fechaPrestamo }}</td>
+                  <td>{{ item.fechaDevolucionEstimada }}</td>
+                  <td>{{ item.fechaDevolucionReal }}</td>
+                  <td>{{ item.implemento }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </ng-container>
+          <ng-template #noDep>
+            <p class="text-center text-gray-600">El estudiante no tiene deudas en esta área.</p>
+          </ng-template>
+        </div>
+      </div>
+    </div>
   </div>
-
-  <!-- Mostrar tablas solo si hay datos -->
-  <div class="flex justify-between gap-4" *ngIf="r.objLaboratorio?.length || r.objFinanciera?.length || r.objDeportes?.length">
-
-    <!-- Laboratorio -->
-    <div class="flex-1 border p-2 rounded">
-      <h3 class="font-bold text-center mb-2">Laboratorios</h3>
-      <ng-container *ngIf="r.objLaboratorio?.length; else noLab">
-        <table class="w-full border border-collapse">
-          <thead>
-            <tr class="bg-gray-200">
-              <th>Fecha Préstamo</th>
-              <th>Estado</th>
-              <th>Fecha Devolución Estimada</th>
-              <th>Fecha Devolución Real</th>
-              <th>Equipo</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let item of r.objLaboratorio">
-              <td>{{ item.fechaPrestamo }}</td>
-              <td>{{ item.estado }}</td>
-              <td>{{ item.fechaDevolucionEstimada }}</td>
-              <td>{{ item.fechaDevolucionReal }}</td>
-              <td>{{ item.equipo }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </ng-container>
-      <ng-template #noLab>
-        <p class="text-center text-gray-600">El estudiante no tiene deudas en esta área.</p>
-      </ng-template>
-    </div>
-
-    <!-- Financiera -->
-    <div class="flex-1 border p-2 rounded">
-      <h3 class="font-bold text-center mb-2">Financiera</h3>
-      <ng-container *ngIf="r.objFinanciera?.length; else noFin">
-        <table class="w-full border border-collapse">
-          <thead>
-            <tr class="bg-gray-200">
-              <th>Monto Adeudado</th>
-              <th>Motivo Deuda</th>
-              <th>Fecha Generación</th>
-              <th>Fecha Límite</th>
-              <th>Estado Deuda</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let item of r.objFinanciera">
-              <td>{{ item.montoAdeudado }}</td>
-              <td>{{ item.motivoDeuda }}</td>
-              <td>{{ item.fechaGeneracionDeuda }}</td>
-              <td>{{ item.fechaLimitePago }}</td>
-              <td>{{ item.estadoDeuda }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </ng-container>
-      <ng-template #noFin>
-        <p class="text-center text-gray-600">El estudiante no tiene deudas en esta área.</p>
-      </ng-template>
-    </div>
-
-    <!-- Deportes -->
-    <div class="flex-1 border p-2 rounded">
-      <h3 class="font-bold text-center mb-2">Deportes</h3>
-      <ng-container *ngIf="r.objDeportes?.length; else noDep">
-        <table class="w-full border border-collapse">
-          <thead>
-            <tr class="bg-gray-200">
-              <th>Fecha Préstamo</th>
-              <th>Fecha Devolución Estimada</th>
-              <th>Fecha Devolución Real</th>
-              <th>Implemento</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let item of r.objDeportes">
-              <td>{{ item.fechaPrestamo }}</td>
-              <td>{{ item.fechaDevolucionEstimada }}</td>
-              <td>{{ item.fechaDevolucionReal }}</td>
-              <td>{{ item.implemento }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </ng-container>
-      <ng-template #noDep>
-        <p class="text-center text-gray-600">El estudiante no tiene deudas en esta área.</p>
-      </ng-template>
-    </div>
-
-  </div>
-</div>
 
 </div>

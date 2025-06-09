@@ -11,16 +11,19 @@ import { PeticionConsultaPazySalvoDTO } from '../../modelo/PeticionConsultaPazyS
   standalone: true,
   imports: [CommonModule, FormsModule, HttpClientModule],
   templateUrl: './paz-salvo.component.html',
+  styleUrl: './paz-salvo.component.css'
 })
 export class PazSalvoComponent {
   respuestaOrquestador?: RespuestaConsultaPazySalvoDTO = new RespuestaConsultaPazySalvoDTO(); 
   peticionCodigoEstudiante: PeticionConsultaPazySalvoDTO = new PeticionConsultaPazySalvoDTO();
+  hora: Date = new Date();
   resultado: any = null;
   error: string = '';
 
   constructor(private pazysalvoService: EstadoPazSalvoService) {}
 
   consultar() {
+    this.hora = new Date();
     this.pazysalvoService.getEstadoPazYSalvoAsin(this.peticionCodigoEstudiante).subscribe({
       next: (data) => {
         this.respuestaOrquestador = data; 
