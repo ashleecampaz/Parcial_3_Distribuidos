@@ -1,9 +1,15 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
-import { provideRouter } from '@angular/router';
-
+import { ApplicationConfig, importProvidersFrom } from '@angular/core';
+import { provideRouter, CanActivateFn } from '@angular/router';
 import { routes } from './app.routes';
-import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
+import { provideClientHydration } from '@angular/platform-browser';
+import { HttpClientModule, withFetch, withInterceptors } from '@angular/common/http';
+import { provideHttpClient } from '@angular/common/http';
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes), provideClientHydration(withEventReplay())]
+  providers: [
+    provideRouter(routes), 
+    provideClientHydration(), 
+    importProvidersFrom(HttpClientModule),
+    provideHttpClient()
+  ]
 };
