@@ -1,0 +1,22 @@
+<div>
+  <h2>Consultar Paz y Salvo</h2>
+  
+  <input
+    type="text"
+    placeholder="Código del estudiante"
+    [(ngModel)]="codigoEstudiante"
+  />
+  
+  <button (click)="consultar()">Consultar</button>
+
+  <!-- Mostrar resultado si existe -->
+  <div *ngIf="resultado" style="margin-top: 2rem;">
+    <h3>Resultado:</h3>
+    <pre>{{ resultado | json }}</pre>
+  </div>
+
+  <!-- Mostrar error si existe -->
+  <div *ngIf="error" style="color: red; margin-top: 1rem;">
+    {{ error }}
+  </div>
+</div>
