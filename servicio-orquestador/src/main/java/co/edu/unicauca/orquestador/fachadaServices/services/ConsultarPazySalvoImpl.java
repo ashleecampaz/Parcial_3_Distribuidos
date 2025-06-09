@@ -68,10 +68,10 @@ public class ConsultarPazySalvoImpl implements ConsultarPazySalvoInt {
                         // Notificar deudas si existen
                         if (objRespuestaLaboratorio != null && !objRespuestaLaboratorio.isEmpty()) {
                                 notificacionEventoListener.notificarDeudas(
-                                        objPeticion.getNombreEstudiante(),
-                                        objPeticion.getCodigoEstudiante(),
-                                        "laboratorio",
-                                        objRespuestaLaboratorio);
+                                                objPeticion.getNombreEstudiante(),
+                                                objPeticion.getCodigoEstudiante(),
+                                                "laboratorio",
+                                                objRespuestaLaboratorio);
                         }
                         if (objRespuestaFinanciera != null && !objRespuestaFinanciera.isEmpty()) {
                                 notificacionEventoListener.notificarDeudas(
@@ -155,6 +155,30 @@ public class ConsultarPazySalvoImpl implements ConsultarPazySalvoInt {
                                                         .setCodigoEstudiante(objPeticion.getCodigoEstudiante());
                                         objRespuestaConsultaPazySalvo.setMensaje(
                                                         "Consulta de paz y salvo realizada con éxito con composición asíncrona.");
+
+                                        // Notificar deudas si existen (igual que en el método sincrónico)
+                                        if (results.getT1() != null && !results.getT1().isEmpty()) {
+                                                notificacionEventoListener.notificarDeudas(
+                                                                objPeticion.getNombreEstudiante(),
+                                                                objPeticion.getCodigoEstudiante(),
+                                                                "laboratorio",
+                                                                results.getT1());
+                                        }
+                                        if (results.getT2() != null && !results.getT2().isEmpty()) {
+                                                notificacionEventoListener.notificarDeudas(
+                                                                objPeticion.getNombreEstudiante(),
+                                                                objPeticion.getCodigoEstudiante(),
+                                                                "financiera",
+                                                                results.getT2());
+                                        }
+                                        if (results.getT3() != null && !results.getT3().isEmpty()) {
+                                                notificacionEventoListener.notificarDeudas(
+                                                                objPeticion.getNombreEstudiante(),
+                                                                objPeticion.getCodigoEstudiante(),
+                                                                "deportes",
+                                                                results.getT3());
+                                        }
+
                                         return objRespuestaConsultaPazySalvo;
                                 })
                                 .onErrorResume(error -> {
@@ -165,25 +189,5 @@ public class ConsultarPazySalvoImpl implements ConsultarPazySalvoInt {
                                                         "Error al consultar el paz y salvo: " + error.getMessage());
                                         return Mono.just(respuesta);
                                 });
-                /*
-                 * return objRespuestaFinanciera.map(financiera -> {
-                 * objRespuestaConsultaPazySalvo.setObjFinanciera(financiera);
-                 * objRespuestaConsultaPazySalvo.setObjLaboratorio(null);
-                 * objRespuestaConsultaPazySalvo.setObjDeportes(null);
-                 * objRespuestaConsultaPazySalvo.setCodigoEstudiante(objPeticion.
-                 * getCodigoEstudiante());
-                 * objRespuestaConsultaPazySalvo.setMensaje(
-                 * "Consulta de paz y salvo realizada con éxito con composición asíncrona.");
-                 * return objRespuestaConsultaPazySalvo;
-                 * }).onErrorResume(error -> {
-                 * RespuestaConsultaPazySalvoDTO respuesta = new
-                 * RespuestaConsultaPazySalvoDTO();
-                 * respuesta.setCodigoEstudiante(objPeticion.getCodigoEstudiante());
-                 * respuesta.setMensaje(
-                 * "Error al consultar el paz y salvo: " + error.getMessage());
-                 * return Mono.just(respuesta);
-                 * });
-                 */
         }
-
 }

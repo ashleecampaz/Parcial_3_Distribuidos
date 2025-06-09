@@ -48,21 +48,4 @@ public class PazySalvoController {
         Mono<RespuestaConsultaPazySalvoDTO> objResultado = this.objFachada.consultarPazySalvoAsincrono(objPeticion);
         return objResultado;
     }
-
-
-    @MessageMapping("/enviarMensajePublico")
-    public MensajePublicoDTO enviarMensajeGrupal(MensajePublicoDTO mensaje) {
-        System.out.println("Enviando mensaje grupal: " + mensaje.getMensaje());
-        mensaje.setMensaje(mensaje.getMensaje());
-        mensaje.setFechaGeneracion(LocalDate.now());
-        simpMessagingTemplate.convertAndSend("/mensajeGrupal/salaChatPublica", mensaje);
-        return mensaje; // reenviamos el mensaje a todos suscritos a /chatGrupal/sala
-    }
-
-    @MessageMapping("/enviarMensajePrivado")
-    public void enviarMensajePrivado(MensajePrivadoDTO mensaje) {
-        String mensajeParaEnviar = mensaje.getMensaje();
-        mensaje.setMensaje(mensajeParaEnviar);
-        simpMessagingTemplate.convertAndSend("/mensajePrivado/"+mensaje.getNombreEstudiante(), mensaje);
-    }
 }
