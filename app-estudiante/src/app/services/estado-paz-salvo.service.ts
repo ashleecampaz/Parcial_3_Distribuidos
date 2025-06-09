@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
 import { RespuestaConsultaPazySalvoDTO } from '../modelo/RespuestaConsultaPazySalvoDTO';
-import { catchError, Observable, throwError } from 'rxjs';
+import { catchError, Observable, throwError, timer } from 'rxjs';
 import { PeticionConsultaPazySalvoDTO } from '../modelo/PeticionConsultaPazySalvoDTO';
+import { timeout, retryWhen, delayWhen, scan } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -16,11 +17,39 @@ export class EstadoPazSalvoService {
 
    getEstadoPazYSalvoAsin(peticion: PeticionConsultaPazySalvoDTO): Observable<RespuestaConsultaPazySalvoDTO> {
     console.log("Obteniendo paz y salvo de manera asincronica");
-    return this.http.post<RespuestaConsultaPazySalvoDTO>(this.urlEndPoint_asin,peticion,{headers: this.httpHeaders});
+    return this.http.post<RespuestaConsultaPazySalvoDTO>(this.urlEndPoint_asin,peticion,{headers: this.httpHeaders}).pipe(
+      timeout(5000), 
+      retryWhen(errors =>
+        errors.pipe(
+          scan((reintentos, error) => {
+            if (reintentos >= 2) {
+              throw error;
+            }
+            return reintentos + 1;
+          }, 0),
+          delayWhen(() => timer(4000)) 
+        )
+      )
+    );
   }
+
+  
 
   getEstadoPazYSalvoSin(peticion: PeticionConsultaPazySalvoDTO): Observable<RespuestaConsultaPazySalvoDTO> {
     console.log("Obteniendo paz y salvo de manera sincronica");
-    return this.http.post<RespuestaConsultaPazySalvoDTO>(this.urlEndPoint_sin, peticion, {headers: this.httpHeaders});
+    return this.http.post<RespuestaConsultaPazySalvoDTO>(this.urlEndPoint_sin, peticion, {headers: this.httpHeaders}).pipe(
+      timeout(5000), 
+      retryWhen(errors =>
+        errors.pipe(
+          scan((reintentos, error) => {
+            if (reintentos >= 2) {
+              throw error;
+            }
+            return reintentos + 1;
+          }, 0),
+          delayWhen(() => timer(4000)) 
+        )
+      )
+    );
   }  
 }
