@@ -63,6 +63,6 @@ public class PazySalvoController {
     public void enviarMensajePrivado(MensajePrivadoDTO mensaje) {
         String mensajeParaEnviar = mensaje.getMensaje();
         mensaje.setMensaje(mensajeParaEnviar);
-        simpMessagingTemplate.convertAndSend("/mensajePrivado/"+mensaje.getArea(), mensaje);
+        simpMessagingTemplate.convertAndSend("/mensajePrivado/"+mensaje.getNombreEstudiante(), mensaje);
     }
 }

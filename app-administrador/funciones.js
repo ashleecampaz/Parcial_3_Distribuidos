@@ -57,10 +57,12 @@ function recibirMensajeGrupal(message) {
 }
 
 function recibirMensajePrivado(message) {
-  const data = JSON.parse(message.body);
+const data = JSON.parse(message.body);
+  let texto = `\nEstudiante: ${data.nombreEstudiante} (Código: ${data.codigoEstudiante})\nDeudas:\n`;
+  data.deudas.forEach(d => texto += "- " + JSON.stringify(d) + "\n");
   const referenciaDiv = document.getElementById('mensajesPrivados');
   const nuevoParrafo = document.createElement('p');
-  nuevoParrafo.textContent = `[${data.fechaGeneracion}] ${data.area}: ${data.mensaje}`;
+  nuevoParrafo.textContent = texto;
   referenciaDiv.appendChild(nuevoParrafo);
 }
 
