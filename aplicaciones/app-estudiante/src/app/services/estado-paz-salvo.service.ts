@@ -1,76 +1,97 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { RespuestaConsultaPazySalvoDTO } from '../modelo/RespuestaConsultaPazySalvoDTO';
 import { catchError, Observable, throwError, timer } from 'rxjs';
 import { PeticionConsultaPazySalvoDTO } from '../modelo/PeticionConsultaPazySalvoDTO';
 import { timeout, retryWhen, delayWhen, scan } from 'rxjs/operators';
-
+ 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root'
 })
 export class EstadoPazSalvoService {
+ 
+  private httpHeaders = new HttpHeaders({'Content-Type': 'application/json'});
+  private urlEndPoint_asin: string = 'http://localhost:8083/api/orquestadorAsincrono';
+  private urlEndPoint_sin: string = 'http://localhost:8083/api/orquestadorSincrono';
+  private urlEndPoint_eliminar_laboratorio: string = 'http://localhost:8083/api/deudas-laboratorio/eliminar/';
+  private urlEndPoint_eliminar_financiera: string = 'http://localhost:8083/api/financiera/eliminar/';
+  private urlEndPoint_eliminar_deporte: string = 'http://localhost:8083/api/deudas-deporte/eliminar/';
 
-  private httpHeaders = new HttpHeaders({'Content-Type': 'application/json'});
-  private urlEndPoint_asin: string = 'http://localhost:8083/api/orquestadorAsincrono';
-  private urlEndPoint_sin: string = 'http://localhost:8083/api/orquestadorSincrono';
-  constructor(private http: HttpClient) { }
-
-
- 
-   getEstadoPazYSalvoAsin(peticion: PeticionConsultaPazySalvoDTO): Observable<RespuestaConsultaPazySalvoDTO> {
-    console.log("Obteniendo paz y salvo de manera asincronica");
-    return this.http.post<RespuestaConsultaPazySalvoDTO>(this.urlEndPoint_asin,peticion,{headers: this.httpHeaders}).pipe(
-      timeout(5000), 
-      retryWhen(errors =>
-        errors.pipe(
-          scan((reintentos, error) => {
-            console.warn(`Reintento #${reintentos +1} fallido.`);
-            if (reintentos >= 2) {
-              throw error;
-            }
-            return reintentos + 1;
-          }, 0),
-          delayWhen(() => {
-            console.log("Esperando 4 segundos antes de reintentar...");
-            return timer(4000);
-          })
-        )
-      )
+  constructor(private http: HttpClient) { }
+ 
+  getEstadoPazYSalvoAsin(peticion: PeticionConsultaPazySalvoDTO): Observable<RespuestaConsultaPazySalvoDTO> {
+    console.log("Obteniendo paz y salvo de manera asincronica");
+    return this.http.post<RespuestaConsultaPazySalvoDTO>(this.urlEndPoint_asin,peticion,{headers: this.httpHeaders}).pipe(
+      timeout(5000), 
+      retryWhen(errors =>
+        errors.pipe(
+          scan((reintentos, error) => {
+            console.warn(`Reintento #${reintentos +1} fallido.`);
+            if (reintentos >= 2) {
+              throw error;
+            }
+            return reintentos + 1;
+          }, 0),
+          delayWhen(() => {
+            console.log("Esperando 4 segundos antes de reintentar...");
+            return timer(4000);
+          })
+        )
+      )
+    );
+  }
+ 
+  getEstadoPazYSalvoSin(peticion: PeticionConsultaPazySalvoDTO): Observable<RespuestaConsultaPazySalvoDTO> {
+    console.log("Obteniendo paz y salvo de manera sincronica");
+    return this.http.post<RespuestaConsultaPazySalvoDTO>(this.urlEndPoint_sin, peticion, {headers: this.httpHeaders}).pipe(
+      timeout(5000), 
+      retryWhen(errors =>
+        errors.pipe(
+          scan((reintentos, error) => {
+            console.warn(`Reintento #${reintentos +1} fallido.`);
+            if (reintentos >= 2) {
+              throw error;
+            }
+            return reintentos + 1;
+          }, 0),
+            delayWhen(() => {
+            console.log("Esperando 4 segundos antes de reintentar...");
+            return timer(4000);
+          })
+        )
+      )
+    );
+  }
+  
+  // Nuevos métodos para eliminar deudas
+  eliminarDeudasLaboratorio(codigoEstudiante: number): Observable<string> {
+    return this.http.delete<string>(`${this.urlEndPoint_eliminar_laboratorio}${codigoEstudiante}`, {headers: this.httpHeaders, responseType: 'text' as 'json'}).pipe(
+      catchError(this.handleError)
     );
   }
 
-  
-
-  getEstadoPazYSalvoSin(peticion: PeticionConsultaPazySalvoDTO): Observable<RespuestaConsultaPazySalvoDTO> {
-    console.log("Obteniendo paz y salvo de manera sincronica");
-    return this.http.post<RespuestaConsultaPazySalvoDTO>(this.urlEndPoint_sin, peticion, {headers: this.httpHeaders}).pipe(
-      timeout(5000), 
-      retryWhen(errors =>
-        errors.pipe(
-          scan((reintentos, error) => {
-            console.warn(`Reintento #${reintentos +1} fallido.`);
-            if (reintentos >= 2) {
-              throw error;
-            }
-            return reintentos + 1;
-          }, 0),
-            delayWhen(() => {
-            console.log("Esperando 4 segundos antes de reintentar...");
-            return timer(4000);
-          })
-        )
-      )
+  eliminarDeudasFinanciera(codigoEstudiante: number): Observable<string> {
+    return this.http.delete<string>(`${this.urlEndPoint_eliminar_financiera}${codigoEstudiante}`, {headers: this.httpHeaders, responseType: 'text' as 'json'}).pipe(
+      catchError(this.handleError)
     );
   }
-  
-    eliminarDeudasLaboratorio(codigoEstudiante: number): Observable<string> {
-      const url = `http://localhost:8082/api/deudas-laboratorio/eliminar-todos/${codigoEstudiante}`;
-      return this.http.delete(url, { responseType: 'text' });
-    }
 
-    eliminarDeudasDeporte(codigoEstudiante: number): Observable<string> {
-      const url = `http://localhost:8081/api/deudas-deporte/eliminar-todos/${codigoEstudiante}`;
-      return this.http.delete(url, { responseType: 'text' });
-    }
+  eliminarDeudasDeporte(codigoEstudiante: number): Observable<string> {
+    return this.http.delete<string>(`${this.urlEndPoint_eliminar_deporte}${codigoEstudiante}`, {headers: this.httpHeaders, responseType: 'text' as 'json'}).pipe(
+      catchError(this.handleError)
+    );
+  }
 
+  private handleError(error: HttpErrorResponse) {
+    let errorMessage = '';
+    if (error.error instanceof ErrorEvent) {
+      // Error del lado del cliente
+      errorMessage = `Error: ${error.error.message}`;
+    } else {
+      // Error del lado del servidor
+      errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+    }
+    console.error(errorMessage);
+    return throwError(() => new Error(errorMessage));
+  }
 }

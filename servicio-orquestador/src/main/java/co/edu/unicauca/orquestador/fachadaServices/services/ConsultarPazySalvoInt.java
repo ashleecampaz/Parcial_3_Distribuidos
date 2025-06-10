@@ -7,4 +7,7 @@ import reactor.core.publisher.Mono;
 public interface ConsultarPazySalvoInt {
     public RespuestaConsultaPazySalvoDTO consultarPazySalvo(PeticionConsultaPazySalvoDTO objPeticion);
     public Mono<RespuestaConsultaPazySalvoDTO> consultarPazySalvoAsincrono(PeticionConsultaPazySalvoDTO objPeticion);
+    String eliminarDeudasLaboratorio(Integer codigoEstudiante);
+    String eliminarDeudasFinanciera(Integer codigoEstudiante);
+    String eliminarDeudasDeporte(Integer codigoEstudiante);
 }

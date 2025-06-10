@@ -57,11 +57,27 @@ function recibirMensajeGrupal(message) {
 }
 
 function recibirMensajePrivado(message) {
-const data = JSON.parse(message.body);
-  let texto = `\nEstudiante: ${data.nombreEstudiante} (Código: ${data.codigoEstudiante})\nDeudas:\n`;
-  data.deudas.forEach(d => texto += "- " + JSON.stringify(d) + "\n");
+  const data = JSON.parse(message.body);
   const referenciaDiv = document.getElementById('notificacionesPrivadas');
   const nuevoParrafo = document.createElement('p');
+  let texto = `Estudiante: ${data.nombreEstudiante} (Código: ${data.codigoEstudiante})\n`;
+
+  // Muestra el mensaje principal
+  if (data.mensaje) {
+    texto += `Mensaje: ${data.mensaje}\n`;
+  }
+
+  // Si hay deudas, las lista
+  if (data.deudas && data.deudas.length > 0) {
+    texto += "Deudas:\n";
+    data.deudas.forEach(d => texto += "- " + JSON.stringify(d) + "\n");
+  } else if (data.deudas && data.deudas.length === 0 && !data.mensaje) {
+      // Caso específico para cuando está en paz y salvo y no hay un mensaje principal.
+      // Esto es para que no quede vacío si por alguna razón el mensaje principal no se setea.
+      texto += "No se registran deudas.\n";
+  }
+
+
   nuevoParrafo.textContent = texto;
   referenciaDiv.appendChild(nuevoParrafo);
 }
