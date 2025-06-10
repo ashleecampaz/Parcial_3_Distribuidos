@@ -36,7 +36,7 @@ export class PazSalvoComponent {
   this.hora = new Date();
 
   this.pazysalvoService.getEstadoPazYSalvoSin(this.peticionCodigoEstudiante,
-   true, (intento) => {
+   false, (intento) => {
     this.numeroReintentos = intento;
   }).subscribe({
       next: (data) => {
