@@ -15,6 +15,8 @@ export class EstadoPazSalvoService {
   private urlEndPoint_sin: string = 'http://localhost:8083/api/orquestadorSincrono';
   constructor(private http: HttpClient) { }
 
+
+ 
    getEstadoPazYSalvoAsin(peticion: PeticionConsultaPazySalvoDTO): Observable<RespuestaConsultaPazySalvoDTO> {
     console.log("Obteniendo paz y salvo de manera asincronica");
     return this.http.post<RespuestaConsultaPazySalvoDTO>(this.urlEndPoint_asin,peticion,{headers: this.httpHeaders}).pipe(
@@ -59,5 +61,16 @@ export class EstadoPazSalvoService {
         )
       )
     );
-  }  
+  }
+  
+    eliminarDeudasLaboratorio(codigoEstudiante: number): Observable<string> {
+      const url = `http://localhost:8082/api/deudas-laboratorio/eliminar-todos/${codigoEstudiante}`;
+      return this.http.delete(url, { responseType: 'text' });
+    }
+
+    eliminarDeudasDeporte(codigoEstudiante: number): Observable<string> {
+      const url = `http://localhost:8081/api/deudas-deporte/eliminar-todos/${codigoEstudiante}`;
+      return this.http.delete(url, { responseType: 'text' });
+    }
+
 }

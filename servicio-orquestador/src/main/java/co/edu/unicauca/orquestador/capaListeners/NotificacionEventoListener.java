@@ -21,6 +21,26 @@ public class NotificacionEventoListener {
         simpMessagingTemplate.convertAndSend("/Administrador/notificaciones", mensaje);
     }
 
+    public void notificarDeudas (String nombreEstudiante,
+    int codigoEstudiante, String area, List<?> deudas) {
+        MensajePrivadoDTO mensajePrivado = new MensajePrivadoDTO();
+        mensajePrivado.setNombreEstudiante(nombreEstudiante);
+        mensajePrivado.setCodigoEstudiante(codigoEstudiante);
+
+        if (deudas == null || deudas.isEmpty()) {
+            // Enviar mensaje de paz y salvo
+            mensajePrivado.setMensaje("El estudiante " + nombreEstudiante + " (Código: " + codigoEstudiante
+                    + ") está en paz y salvo en el área de " + area + ".");
+        } else {
+            // Enviar mensaje de deudas
+            mensajePrivado.setMensaje("El estudiante " + nombreEstudiante + " (Código: " + codigoEstudiante
+                    + ") tiene deudas en el área de " + area + ".");
+            mensajePrivado.setDeudas(deudas);
+        }
+
+        simpMessagingTemplate.convertAndSend("/Administrador/" + area, mensajePrivado);
+    }
+
     public void notificarEstadoFinanciero(String nombreEstudiante, int codigoEstudiante, String area, List<?> deudas) {
         MensajePrivadoDTO mensajePrivado = new MensajePrivadoDTO();
         mensajePrivado.setNombreEstudiante(nombreEstudiante);

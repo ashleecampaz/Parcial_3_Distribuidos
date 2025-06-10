@@ -34,4 +34,35 @@ export class PazSalvoComponent {
       },
     });
   }
+
+    eliminarDeudasLaboratorio() {
+    const codigo = Number(this.peticionCodigoEstudiante.codigoEstudiante);
+    this.pazysalvoService.eliminarDeudasLaboratorio(codigo).subscribe({
+      next: (mensaje) => {
+        console.log(mensaje);
+        alert('Deudas de laboratorio eliminadas con éxito.');
+        this.consultar(); // Actualizar el estado después de eliminar
+      },
+      error: (err) => {
+        console.error(err);
+        this.error = 'No se pudieron eliminar las deudas de laboratorio.';
+      }
+    });
+  }
+
+  eliminarDeudasDeporte() {
+    const codigo = Number(this.peticionCodigoEstudiante.codigoEstudiante);
+    this.pazysalvoService.eliminarDeudasDeporte(codigo).subscribe({
+      next: (mensaje) => {
+        console.log(mensaje);
+        alert('Deudas de deporte eliminadas con éxito.');
+        this.consultar();
+      },
+      error: (err) => {
+        console.error(err);
+        this.error = 'No se pudieron eliminar las deudas de deporte.';
+      }
+    });
+  }
+
 }
