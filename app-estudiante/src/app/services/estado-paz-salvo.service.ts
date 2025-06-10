@@ -22,12 +22,16 @@ export class EstadoPazSalvoService {
       retryWhen(errors =>
         errors.pipe(
           scan((reintentos, error) => {
+            console.warn(`Reintento #${reintentos +1} fallido.`);
             if (reintentos >= 2) {
               throw error;
             }
             return reintentos + 1;
           }, 0),
-          delayWhen(() => timer(4000)) 
+          delayWhen(() => {
+            console.log("Esperando 4 segundos antes de reintentar...");
+            return timer(4000);
+          })
         )
       )
     );
@@ -42,12 +46,16 @@ export class EstadoPazSalvoService {
       retryWhen(errors =>
         errors.pipe(
           scan((reintentos, error) => {
+            console.warn(`Reintento #${reintentos +1} fallido.`);
             if (reintentos >= 2) {
               throw error;
             }
             return reintentos + 1;
           }, 0),
-          delayWhen(() => timer(4000)) 
+            delayWhen(() => {
+            console.log("Esperando 4 segundos antes de reintentar...");
+            return timer(4000);
+          })
         )
       )
     );

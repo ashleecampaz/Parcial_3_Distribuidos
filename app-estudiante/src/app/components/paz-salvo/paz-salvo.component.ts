@@ -24,7 +24,7 @@ export class PazSalvoComponent {
 
   consultar() {
     this.hora = new Date();
-    this.pazysalvoService.getEstadoPazYSalvoAsin(this.peticionCodigoEstudiante).subscribe({
+    this.pazysalvoService.getEstadoPazYSalvoSin(this.peticionCodigoEstudiante).subscribe({
       next: (data) => {
         this.respuestaOrquestador = data; 
       },

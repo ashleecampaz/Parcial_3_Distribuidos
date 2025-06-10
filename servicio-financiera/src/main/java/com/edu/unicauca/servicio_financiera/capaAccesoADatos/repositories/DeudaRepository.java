@@ -19,11 +19,11 @@ public class DeudaRepository {
         public void init() {
                 deudas.add(new Deuda(1001, 50000.0, "Mora en pago de matrícula",
                                 LocalDate.of(2025, 5, 1), LocalDate.of(2025, 5, 15), "en mora"));
-
-                deudas.add(new Deuda(1002, 0.0, "Ninguno", null, null, "pagada"));
-
-                deudas.add(new Deuda(1004, 20000.0, "Pérdida de material",
+                                deudas.add(new Deuda(1002, 0.0, "Ninguno", null, null, "pagada"));
+                                deudas.add(new Deuda(1004, 20000.0, "Pérdida de material",
                                 LocalDate.of(2025, 6, 1), LocalDate.of(2025, 6, 10), "pendiente"));
+                                deudas.add(new Deuda(1005, 50000.0, "Mora en pago de matrícula",
+                                                LocalDate.of(2025, 5, 1), LocalDate.of(2025, 5, 15), "en mora"));        
         }
 
         /**
