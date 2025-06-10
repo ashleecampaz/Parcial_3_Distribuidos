@@ -23,28 +23,41 @@ public class PazySalvoController
     @Autowired
     private ConsultarPazySalvoInt objFachada;
     @Autowired
-private SimpMessagingTemplate simpMessagingTemplate;
+    private SimpMessagingTemplate simpMessagingTemplate;
 
-@Autowired
-  private NotificacionEventoListener notificacionEventoListener;
+    @Autowired
+    private NotificacionEventoListener notificacionEventoListener;
+
+    @Autowired
+    private ContadorFallos contadorFallos;
 
   @PostMapping("/orquestadorSincrono")
-  public RespuestaConsultaPazySalvoDTO orquestadorServiciosSincronicamente(
+  public ResponseEntity<?> orquestadorServiciosSincronicamente(
       @RequestBody PeticionConsultaPazySalvoDTO objPeticion) {
-    notificacionEventoListener.notificarSolicitudPazySalvo(objPeticion.getNombreEstudiante(),
-objPeticion.getCodigoEstudiante());
-    RespuestaConsultaPazySalvoDTO objResultado = this.objFachada.consultarPazySalvo(objPeticion);
-    return objResultado;
-  }
+          
+          int intento = contadorFallos.siguienteIntento();
+          System.out.println("Intento número: " + intento);
+          
+          if (intento <= 2) {
+              System.out.println("Simulando fallo en el intento #" + intento);
+              return new ResponseEntity<>("Simulando fallo en el intento #" + intento, HttpStatus.SERVICE_UNAVAILABLE);
+            }
+
+        notificacionEventoListener.notificarSolicitudPazySalvo(objPeticion.getNombreEstudiante(),
+        objPeticion.getCodigoEstudiante());
+        RespuestaConsultaPazySalvoDTO objResultado = this.objFachada.consultarPazySalvo(objPeticion);
+        contadorFallos.resetear();
+        return ResponseEntity.ok(objResultado);
+    }
 
   @PostMapping("/orquestadorAsincrono")
   public Mono<RespuestaConsultaPazySalvoDTO> orquestadorServiciosAsincronicamente(
       @RequestBody PeticionConsultaPazySalvoDTO objPeticion) {
-    notificacionEventoListener.notificarSolicitudPazySalvo(objPeticion.getNombreEstudiante(),
-objPeticion.getCodigoEstudiante());
-    Mono<RespuestaConsultaPazySalvoDTO> objResultado = this.objFachada.consultarPazySalvoAsincrono(objPeticion);
-    return objResultado;
-  }
+        notificacionEventoListener.notificarSolicitudPazySalvo(objPeticion.getNombreEstudiante(),
+    objPeticion.getCodigoEstudiante());
+        Mono<RespuestaConsultaPazySalvoDTO> objResultado = this.objFachada.consultarPazySalvoAsincrono(objPeticion);
+        return objResultado;
+    }
 
     // Nuevos endpoints para eliminar deudas
     @DeleteMapping("/deudas-laboratorio/eliminar/{codigoEstudiante}")
