@@ -1,0 +1,13 @@
+1. Asegúrate de tener instalados:
+java -version
+javac -version
+mvn -version
+Si no está instalado, descárgalo e instala Maven y busca tuto para establecer las variables de entorno.
+2. Navega al directorio de tu proyecto Spring Boot:
+3. Ejecuta en el cmd:
+ mvn package
+(si da errores valiste vg)
+4. en la carpeta target se crea un archivo:
+nombre-de-tu-aplicacion-version.jar
+abre el cmd en el target de el proyecto correspondiente y ejecuta:
+java -jar nombre-de-tu-aplicacion-version.jar
