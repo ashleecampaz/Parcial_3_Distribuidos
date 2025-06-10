@@ -22,6 +22,9 @@ export class PazSalvoComponent {
 
   constructor(private pazysalvoService: EstadoPazSalvoService) {}
 
+  get r() {
+    return this.respuestaOrquestador;
+  }
   consultar() {
     this.hora = new Date();
     this.pazysalvoService.getEstadoPazYSalvoSin(this.peticionCodigoEstudiante).subscribe({

@@ -59,9 +59,4 @@ public class ControladorDeporte {
     public List<PrestamoDTORespuesta> listarPrestamos() {
        return servicioDeporte.consultarPrestamos(); 
     }
-    
-    
-    
-    
-
 }

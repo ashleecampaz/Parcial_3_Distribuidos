@@ -1,0 +1,156 @@
+<!-- ENCABEZADO -->
+<header class="header-ucauca">
+  <div class="header-content">
+    <img src="assets/logoucauca.png" alt="Logo Universidad del Cauca" class="logo-ucauca" />
+    <div>
+      <h1 class="titulo-uni">Universidad del Cauca</h1>
+      <p class="titulo-materia">Sistemas Distribuidos</p>
+    </div>
+  </div>
+</header>
+
+
+
+<!-- CUERPO PRINCIPAL -->
+<main class="main-container">
+
+  <!-- FORMULARIO -->
+  <div class="card mb-4 p-4">
+    <h2 class="mb-3">Consulta Paz y Salvo</h2>
+    <form #form="ngForm">
+      <div class="mb-3">
+        <label>Nombre del estudiante</label>
+        <input type="text" class="form-control" required name="nombre"
+          [(ngModel)]="peticionCodigoEstudiante.nombreEstudiante" #nombre="ngModel" />
+        <div *ngIf="nombre.invalid && nombre.touched" class="text-danger">Campo obligatorio.</div>
+      </div>
+
+      <div class="mb-3">
+        <label>Código del estudiante</label>
+        <input type="number" class="form-control" required name="codigo"
+          [(ngModel)]="peticionCodigoEstudiante.codigoEstudiante" #codigo="ngModel" />
+        <div *ngIf="codigo.invalid && codigo.touched" class="text-danger">Campo obligatorio.</div>
+      </div>
+
+      <button (click)="consultar()" [disabled]="form.invalid" class="btn btn-accion mt-2">
+        Consultar
+      </button>
+    </form>
+  </div>
+
+  <!-- MENSAJE ORQUESTADOR -->
+  <div *ngIf="respuestaOrquestador">
+    <p class="fw-bold text-primary"> {{ respuestaOrquestador.mensaje }}</p>
+
+    <!-- TARJETA PAZ Y SALVO -->
+    <div *ngIf="respuestaOrquestador.objLaboratorio?.length == 0 && respuestaOrquestador.objFinanciera?.length == 0 && respuestaOrquestador.objDeportes?.length == 0"
+      class="reporte-card text-center">
+      <p class="mb-0">
+        El estudiante <strong>{{peticionCodigoEstudiante.nombreEstudiante}}</strong> identificado con código
+        <strong>{{peticionCodigoEstudiante.codigoEstudiante}}</strong> se encuentra <strong>a paz y salvo</strong>.
+        <br><br>
+        Paz y Salvo generado a las {{hora.toTimeString().slice(0, 5)}}
+        del {{hora.getDate()}} de {{hora.toLocaleString('es-ES', { month: 'long' })}} de {{hora.getFullYear()}}.
+      </p>
+    </div>
+
+    <!-- TABLAS DE DEUDA -->
+    <div *ngIf="respuestaOrquestador.objLaboratorio?.length || respuestaOrquestador.objFinanciera?.length || respuestaOrquestador.objDeportes?.length">
+
+      <!-- LABORATORIOS -->
+      <div class="reporte-card mt-4">
+        <h4>Área de Laboratorios</h4>
+        <ng-container *ngIf="respuestaOrquestador.objLaboratorio?.length; else noLab">
+          <table class="table table-bordered table-sm">
+            <thead>
+              <tr>
+                <th>Fecha Préstamo</th>
+                <th>Estado</th>
+                <th>Devolución Estimada</th>
+                <th>Devolución Real</th>
+                <th>Equipo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of respuestaOrquestador.objLaboratorio">
+                <td>{{ item.fechaPrestamo }}</td>
+                <td>{{ item.estado }}</td>
+                <td>{{ item.fechaDevolucionEstimada }}</td>
+                <td>{{ item.fechaDevolucionReal }}</td>
+                <td>{{ item.equipo }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <button (click)="eliminarDeudasLaboratorio()" class="btn btn-accion mt-2">Eliminar todas las deudas</button>
+        </ng-container>
+        <ng-template #noLab>
+          <p class="text-muted">El estudiante no tiene deudas en esta área.</p>
+        </ng-template>
+      </div>
+
+      <!-- FINANCIERA -->
+      <div class="reporte-card mt-4">
+        <h4>Área Financiera</h4>
+        <ng-container *ngIf="respuestaOrquestador.objFinanciera?.length; else noFin">
+          <table class="table table-bordered table-sm">
+            <thead>
+              <tr>
+                <th>Monto</th>
+                <th>Motivo</th>
+                <th>Generación</th>
+                <th>Límite</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of respuestaOrquestador.objFinanciera">
+                <td>{{ item.montoAdeudado }}</td>
+                <td>{{ item.motivoDeuda }}</td>
+                <td>{{ item.fechaGeneracionDeuda }}</td>
+                <td>{{ item.fechaLimitePago }}</td>
+                <td>{{ item.estadoDeuda }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </ng-container>
+        <ng-template #noFin>
+          <p class="text-muted">El estudiante no tiene deudas en esta área.</p>
+        </ng-template>
+      </div>
+
+      <!-- DEPORTES -->
+      <div class="reporte-card mt-4">
+        <h4>Área de Deportes</h4>
+        <ng-container *ngIf="respuestaOrquestador.objDeportes?.length; else noDep">
+          <table class="table table-bordered table-sm">
+            <thead>
+              <tr>
+                <th>Fecha Préstamo</th>
+                <th>Devolución Estimada</th>
+                <th>Devolución Real</th>
+                <th>Implemento</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of respuestaOrquestador.objDeportes">
+                <td>{{ item.fechaPrestamo }}</td>
+                <td>{{ item.fechaDevolucionEstimada }}</td>
+                <td>{{ item.fechaDevolucionReal }}</td>
+                <td>{{ item.implemento }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <button (click)="eliminarDeudasDeporte()" class="btn btn-accion mt-2">Eliminar todas las deudas</button>
+        </ng-container>
+        <ng-template #noDep>
+          <p class="text-muted">El estudiante no tiene deudas en esta área.</p>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- PIE DE PÁGINA -->
+<footer class="footer-ucauca">
+  <p>Aplicación de Paz y Salvo - Universidad del Cauca © {{hora.getFullYear()}}</p>
+</footer>
