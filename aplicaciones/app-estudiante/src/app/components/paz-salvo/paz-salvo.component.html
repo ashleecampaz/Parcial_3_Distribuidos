@@ -46,8 +46,8 @@
     </div>
     
     <!-- TARJETA PAZ Y SALVO -->
-    <div *ngIf="respuestaOrquestador.objLaboratorio?.length|| respuestaOrquestador.objFinanciera?.length || respuestaOrquestador.objDeportes?.length">
- 
+    <div *ngIf="respuestaOrquestador">
+
             <div class="reporte-card mt-4">
         <h4>Área de Laboratorios</h4>
         <ng-container *ngIf="respuestaOrquestador.objLaboratorio?.length; else noLab">
