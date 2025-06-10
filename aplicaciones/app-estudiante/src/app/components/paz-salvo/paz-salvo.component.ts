@@ -19,6 +19,8 @@ export class PazSalvoComponent {
   hora: Date = new Date();
   resultado: any = null;
   error: string = '';
+  cargando: boolean = false;
+  numeroReintentos: number = 0;
  
   constructor(private pazysalvoService: EstadoPazSalvoService) {}
  
@@ -26,14 +28,26 @@ export class PazSalvoComponent {
     return this.respuestaOrquestador;
   }
   consultar() {
-    this.hora = new Date();
-    this.pazysalvoService.getEstadoPazYSalvoSin(this.peticionCodigoEstudiante).subscribe({
-      next: (data) => {
+  this.hora = new Date();
+  this.error = '';
+  this.respuestaOrquestador = new RespuestaConsultaPazySalvoDTO();
+  this.numeroReintentos = 0;
+  this.cargando = true;
+  this.hora = new Date();
+
+  this.pazysalvoService.getEstadoPazYSalvoSin(this.peticionCodigoEstudiante,
+   false, (intento) => {
+    this.numeroReintentos = intento;
+  }).subscribe({
+      next: (data) => {
         this.respuestaOrquestador = data; 
+        this.cargando = false;
+        this.error = '';
       },
       error: (err) => {
-        this.error = 'Error al consultar el estado. Verifica el código.';
-        console.error(err);
+        this.error = `No se pudo conectar con el orquestador después de ${this.numeroReintentos} intento(s).`;
+        this.cargando = false;
+        console.error(err);
       },
     });
   }

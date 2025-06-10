@@ -4,6 +4,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.DeleteMapping; // Importar DeleteMapping
@@ -33,14 +34,15 @@ public class PazySalvoController
 
   @PostMapping("/orquestadorSincrono")
   public ResponseEntity<?> orquestadorServiciosSincronicamente(
-      @RequestBody PeticionConsultaPazySalvoDTO objPeticion) {
+      @RequestBody PeticionConsultaPazySalvoDTO objPeticion,
+      @RequestParam(defaultValue = "false") boolean simularFallo) throws InterruptedException {
           
           int intento = contadorFallos.siguienteIntento();
           System.out.println("Intento número: " + intento);
           
-          if (intento <= 2) {
-              System.out.println("Simulando fallo en el intento #" + intento);
-              return new ResponseEntity<>("Simulando fallo en el intento #" + intento, HttpStatus.SERVICE_UNAVAILABLE);
+          if (simularFallo) {
+                System.out.println("Simulando un fallo de conexión...");
+                Thread.sleep(7000); 
             }
 
         notificacionEventoListener.notificarSolicitudPazySalvo(objPeticion.getNombreEstudiante(),

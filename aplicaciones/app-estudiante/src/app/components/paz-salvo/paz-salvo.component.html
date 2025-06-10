@@ -9,8 +9,6 @@
   </div>
 </header>
 
-
-
 <!-- CUERPO PRINCIPAL -->
 <main class="main-container">
 
@@ -41,7 +39,12 @@
   <!-- MENSAJE ORQUESTADOR -->
   <div *ngIf="respuestaOrquestador">
     <p class="fw-bold text-primary"> {{ respuestaOrquestador.mensaje }}</p>
-
+  
+    <!-- MENSAJE REINTENTOS -->
+    <div *ngIf="numeroReintentos > 0 && !error" class="alert alert-warning mt-3">
+      Se realizó {{ numeroReintentos }} reintento(s) para contactar el orquestador.
+    </div>
+    
     <!-- TARJETA PAZ Y SALVO -->
     <div *ngIf="respuestaOrquestador.objLaboratorio?.length|| respuestaOrquestador.objFinanciera?.length || respuestaOrquestador.objDeportes?.length">
  

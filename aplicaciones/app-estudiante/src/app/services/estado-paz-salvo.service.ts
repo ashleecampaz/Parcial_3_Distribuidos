@@ -41,27 +41,34 @@ export class EstadoPazSalvoService {
     );
   }
  
-  getEstadoPazYSalvoSin(peticion: PeticionConsultaPazySalvoDTO): Observable<RespuestaConsultaPazySalvoDTO> {
-    console.log("Obteniendo paz y salvo de manera sincronica");
-    return this.http.post<RespuestaConsultaPazySalvoDTO>(this.urlEndPoint_sin, peticion, {headers: this.httpHeaders}).pipe(
-      timeout(5000), 
-      retryWhen(errors =>
-        errors.pipe(
-          scan((reintentos, error) => {
-            console.warn(`Reintento #${reintentos +1} fallido.`);
-            if (reintentos >= 2) {
-              throw error;
-            }
-            return reintentos + 1;
-          }, 0),
-            delayWhen(() => {
-            console.log("Esperando 4 segundos antes de reintentar...");
-            return timer(4000);
-          })
-        )
-      )
-    );
-  }
+  // === SINCRÓNICO con control de simulación de fallo ===
+  getEstadoPazYSalvoSin(peticion: PeticionConsultaPazySalvoDTO, simularFallo: boolean = false, callbackReintento?: (intento: number) => void
+        ): Observable<RespuestaConsultaPazySalvoDTO> {
+          
+  console.log("Obteniendo paz y salvo de manera sincronica");
+  const url = `${this.urlEndPoint_sin}?simularFallo=${simularFallo}`;
+  return this.http.post<RespuestaConsultaPazySalvoDTO>(url, peticion, {
+    headers: this.httpHeaders
+  }).pipe(
+    timeout(5000),
+    retryWhen(errors =>
+      errors.pipe(
+        scan((reintentos, error) => {
+          const nuevoIntento = reintentos + 1;
+          console.warn(`Reintento #${nuevoIntento} fallido.`);
+          if (callbackReintento) callbackReintento(nuevoIntento);
+          if (nuevoIntento >= 3) throw error;
+          return nuevoIntento;
+        }, 0),
+        delayWhen(() => {
+          console.log("Esperando 4 segundos antes de reintentar...");
+          return timer(4000);
+        })
+      )
+    )
+  );
+}
+
   
   // Nuevos métodos para eliminar deudas
   eliminarDeudasLaboratorio(codigoEstudiante: number): Observable<string> {
