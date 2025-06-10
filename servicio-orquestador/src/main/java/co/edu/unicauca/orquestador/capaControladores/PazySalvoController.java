@@ -32,25 +32,34 @@ public class PazySalvoController
     @Autowired
     private ContadorFallos contadorFallos;
 
-  @PostMapping("/orquestadorSincrono")
-  public ResponseEntity<?> orquestadorServiciosSincronicamente(
-      @RequestBody PeticionConsultaPazySalvoDTO objPeticion,
-      @RequestParam(defaultValue = "false") boolean simularFallo) throws InterruptedException {
-          
-          int intento = contadorFallos.siguienteIntento();
-          System.out.println("Intento número: " + intento);
-          
-          if (simularFallo) {
-                System.out.println("Simulando un fallo de conexión...");
-                Thread.sleep(7000); 
-            }
+    @PostMapping("/orquestadorSincrono")
+    public ResponseEntity<?> orquestadorServiciosSincronicamente(
+        @RequestBody PeticionConsultaPazySalvoDTO objPeticion,
+        @RequestParam(defaultValue = "false") boolean simularFallo) throws InterruptedException {
 
-        notificacionEventoListener.notificarSolicitudPazySalvo(objPeticion.getNombreEstudiante(),
-        objPeticion.getCodigoEstudiante());
-        RespuestaConsultaPazySalvoDTO objResultado = this.objFachada.consultarPazySalvo(objPeticion);
-        contadorFallos.resetear();
-        return ResponseEntity.ok(objResultado);
+        System.out.println("simularFallo recibido: " + simularFallo);
+
+        int intento = contadorFallos.siguienteIntento();
+        System.out.println("Intento número: " + intento);
+
+        if (simularFallo) {
+            System.out.println("Simulando un fallo de conexión...");
+            Thread.sleep(7000); // Causa timeout en frontend
+            return null;
+        }
+        else {
+            System.out.println("No se simula fallo, continuando con la solicitud...");
+            notificacionEventoListener.notificarSolicitudPazySalvo(objPeticion.getNombreEstudiante(),
+                objPeticion.getCodigoEstudiante());
+    
+            RespuestaConsultaPazySalvoDTO objResultado = this.objFachada.consultarPazySalvo(objPeticion);
+            contadorFallos.resetear();
+            return ResponseEntity.ok(objResultado);
+        }	
+
+
     }
+
 
   @PostMapping("/orquestadorAsincrono")
   public Mono<RespuestaConsultaPazySalvoDTO> orquestadorServiciosAsincronicamente(

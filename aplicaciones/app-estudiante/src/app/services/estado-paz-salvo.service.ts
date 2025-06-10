@@ -42,11 +42,17 @@ export class EstadoPazSalvoService {
   }
  
   // === SINCRÓNICO con control de simulación de fallo ===
-  getEstadoPazYSalvoSin(peticion: PeticionConsultaPazySalvoDTO, simularFallo: boolean = false, callbackReintento?: (intento: number) => void
-        ): Observable<RespuestaConsultaPazySalvoDTO> {
-          
-  console.log("Obteniendo paz y salvo de manera sincronica");
+getEstadoPazYSalvoSin(
+  peticion: PeticionConsultaPazySalvoDTO,
+  simularFallo: boolean = false,
+  callbackReintento?: (intento: number) => void
+): Observable<RespuestaConsultaPazySalvoDTO> {
+
+  // Construir URL con parámetro simularFallo
   const url = `${this.urlEndPoint_sin}?simularFallo=${simularFallo}`;
+
+  console.log("Obteniendo paz y salvo de manera sincrona. Simular fallo:", simularFallo);
+
   return this.http.post<RespuestaConsultaPazySalvoDTO>(url, peticion, {
     headers: this.httpHeaders
   }).pipe(
@@ -68,6 +74,8 @@ export class EstadoPazSalvoService {
     )
   );
 }
+
+
 
   
   // Nuevos métodos para eliminar deudas
